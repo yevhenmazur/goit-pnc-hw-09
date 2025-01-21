@@ -8,19 +8,19 @@ from sqlalchemy import create_engine
 
 def register_common_cli_params(parser):
     parser.add_argument('--db_name', type=str,
-                        default=get_default('db_name', 'test'),
+                        default=get_default('db_name', 'TestDB2'),
                         help='Database name')
     parser.add_argument('--db_user', type=str,
-                        default=get_default('db_user','test'),
+                        default=get_default('db_user', os.getenv('MYSQL_USER')),
                         help='Database user')
     parser.add_argument('--db_password', type=str,
-                        default=get_default('db_password', 'test'),
+                        default=get_default('db_password', os.getenv('MYSQL_PASSWORD')),
                         help='Database user\'s password')
     parser.add_argument('--port', type=int,
                         default=get_default('port', 9494),
                         help='Port of database or AcraConnector')
     parser.add_argument('--host', type=str,
-                        default=get_default('host', 'localhost'),
+                        default=get_default('host', 'acra-server'),
                         help='Host of database or AcraConnector')
     parser.add_argument('--print', action='store_true',
                         default=get_default('print', False),
@@ -29,13 +29,13 @@ def register_common_cli_params(parser):
                         default=get_default('ssl_mode', False),
                         help='SSL connection mode')
     parser.add_argument('--tls_root_cert', 
-                        default=get_default('tls_root_cert', False),
+                        default=get_default('tls_root_cert', '/ssl/ca.crt'),
                         help='Path to root certificate used in TLS connection')
     parser.add_argument('--tls_key', 
-                        default=get_default('tls_key', False),
+                        default=get_default('tls_key', '/ssl/acra-client.key'),
                         help='Path to client TLS key used in TLS connection')
     parser.add_argument('--tls_cert', 
-                        default=get_default('tls_cert', False),
+                        default=get_default('tls_cert', '/ssl/acra-client.crt'),
                         help='Path to client TLS certificate used in TLS connection')
     parser.add_argument('-v', '--verbose', dest='verbose', action='store_true',
                         default=get_default('verbose', False), help='verbose')
@@ -44,7 +44,7 @@ def register_common_cli_params(parser):
                         help="Use postgresql driver (default if nothing else "
                              "set)")
     parser.add_argument('--mysql', action='store_true',
-                        default=get_default('mysql', False),
+                        default=get_default('mysql', True),
                         help="Use mysql driver")
 
 

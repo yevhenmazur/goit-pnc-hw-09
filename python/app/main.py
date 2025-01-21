@@ -88,7 +88,8 @@ def print_data(connection, columns, table=customers):
     print("{:<3} - {}".format(*default_columns, ' - '.join(extra_columns)))
     for row in result:
         values = ['{:<3}'.format(row['id'])]
-        for col in row[1:]:
+        # for col in row[1:]:
+        for col in row._mapping.values():
             if isinstance(col, (bytes, bytearray)):
                 values.append(col.decode('utf-8', errors='ignore'))
             else:
