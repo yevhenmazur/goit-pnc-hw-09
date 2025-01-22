@@ -11,10 +11,12 @@ def register_common_cli_params(parser):
                         default=get_default('db_name', 'TestDB2'),
                         help='Database name')
     parser.add_argument('--db_user', type=str,
-                        default=get_default('db_user', os.getenv('MYSQL_USER')),
+                        default=get_default(
+                            'db_user', os.getenv('MYSQL_USER')),
                         help='Database user')
     parser.add_argument('--db_password', type=str,
-                        default=get_default('db_password', os.getenv('MYSQL_PASSWORD')),
+                        default=get_default(
+                            'db_password', os.getenv('MYSQL_PASSWORD')),
                         help='Database user\'s password')
     parser.add_argument('--port', type=int,
                         default=get_default('port', 9494),
@@ -28,14 +30,15 @@ def register_common_cli_params(parser):
     parser.add_argument('--ssl_mode',
                         default=get_default('ssl_mode', False),
                         help='SSL connection mode')
-    parser.add_argument('--tls_root_cert', 
+    parser.add_argument('--tls_root_cert',
                         default=get_default('tls_root_cert', '/ssl/ca.crt'),
                         help='Path to root certificate used in TLS connection')
-    parser.add_argument('--tls_key', 
+    parser.add_argument('--tls_key',
                         default=get_default('tls_key', '/ssl/acra-client.key'),
                         help='Path to client TLS key used in TLS connection')
-    parser.add_argument('--tls_cert', 
-                        default=get_default('tls_cert', '/ssl/acra-client.crt'),
+    parser.add_argument('--tls_cert',
+                        default=get_default(
+                            'tls_cert', '/ssl/acra-client.crt'),
                         help='Path to client TLS certificate used in TLS connection')
     parser.add_argument('-v', '--verbose', dest='verbose', action='store_true',
                         default=get_default('verbose', False), help='verbose')

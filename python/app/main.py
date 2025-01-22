@@ -3,7 +3,8 @@ import json
 import re
 
 from collections import defaultdict
-from sqlalchemy import (Table, Column, Integer, MetaData, select, String, Float, ForeignKey, Date)
+from sqlalchemy import (Table, Column, Integer, MetaData,
+                        select, String, Float, ForeignKey, Date)
 from sqlalchemy.dialects import mysql
 from common import get_engine, get_default, register_common_cli_params
 
@@ -73,9 +74,11 @@ def print_data(connection, columns, table=customers):
             table_columns = [table.c.id] + [
                 i for i in table.columns if i.name not in default_columns]
             query = select(table_columns)
-            extra_columns = [i.name for i in table.columns if i.name not in default_columns]
+            extra_columns = [
+                i.name for i in table.columns if i.name not in default_columns]
     except AttributeError:
-        print("\n\n{0}\nprobably you used incorrect column name\n{0}\n\n".format('*' * 30))
+        print(
+            "\n\n{0}\nprobably you used incorrect column name\n{0}\n\n".format('*' * 30))
         raise
         exit(1)
 
@@ -101,11 +104,11 @@ def print_data(connection, columns, table=customers):
 def write_data_from_json(json_string, connection):
     """
     Write data from a JSON file into corresponding tables using SQLAlchemy.
-    
+
     :param json_file: Path to the JSON file containing data.
     :param connection: Active SQLAlchemy connection object.
     """
-    
+
     data = json.loads(json_string)
     for table_name, rows in data.items():
         table = table_map.get(table_name)
@@ -115,7 +118,7 @@ def write_data_from_json(json_string, connection):
 
         if isinstance(rows, dict):  # In case of a single row, wrap it in a list
             rows = [rows]
-        
+
         for row in rows:
             # Clean and prepare the data for insertion
             clean_row_data = {}
@@ -137,43 +140,48 @@ def write_data_from_json(json_string, connection):
                             clean_row_data[col_name] = None
                     else:
                         clean_row_data[col_name] = value
-            
+
             try:
                 connection.execute(table.insert(), clean_row_data)
                 print(f"Inserted into '{table_name}': {clean_row_data}")
             except Exception as e:
-                print(f"Failed to insert into '{table_name}': {clean_row_data} - Error: {e}")
+                print(f"Failed to insert into '{table_name}': {
+                      clean_row_data} - Error: {e}")
 
 
 def extract_insert_commands(sql_dump):
     """Extract all INSERT INTO commands and parse their values into dictionaries."""
     data_for_insertion = []
-    insert_pattern = re.compile(r"INSERT INTO\s+`?([a-zA-Z0-9_]+)`?\s*\((.*?)\)\s*VALUES\s*(.+?);", re.DOTALL)
-    
+    insert_pattern = re.compile(
+        r"INSERT INTO\s+`?([a-zA-Z0-9_]+)`?\s*\((.*?)\)\s*VALUES\s*(.+?);", re.DOTALL)
+
     matches = insert_pattern.findall(sql_dump)
 
     for table, columns, values_block in matches:
-        columns = [col.strip('` ') for col in columns.split(',')]  # Clean column names
+        columns = [col.strip('` ')
+                   for col in columns.split(',')]  # Clean column names
         values_rows = re.findall(r"\((.*?)\)(?=,|$)", values_block)
 
         for row in values_rows:
-            values = re.findall(r"(?:'(?:[^']|\\')*'|[^',\s]+)", row)  # Handles quoted strings and numbers
-            values = [v.strip("'") for v in values]  # Remove quotes from strings
+            # Handles quoted strings and numbers
+            values = re.findall(r"(?:'(?:[^']|\\')*'|[^',\s]+)", row)
+            # Remove quotes from strings
+            values = [v.strip("'") for v in values]
             row_dict = dict(zip(columns, values))
             data_for_insertion.append((table, row_dict))
 
     return data_for_insertion
 
 
-
 def convert_to_json(data):
     """
     Convert a list of tuples (table_name, row_data) to a JSON-compatible dictionary.
-    
+
     :param data: List of tuples [(table_name, row_data_dict)].
     :return: JSON string representation of the grouped data.
     """
-    grouped_data = defaultdict(list)  # Create a dictionary with lists as default values
+    grouped_data = defaultdict(
+        list)  # Create a dictionary with lists as default values
 
     for table_name, row_data in data:
         grouped_data[table_name].append(row_data)  # Group rows by table name
@@ -191,8 +199,10 @@ if __name__ == '__main__':
                         help='data to save in ascii. default random data')
     parser.add_argument('-c', '--columns', nargs='+', dest='columns',
                         default=get_default('columns', False), help='List of columns to display')
-    parser.add_argument('--db_table', default=customers.name, help='Table used to read/write data')
-    parser.add_argument('--import_dump', type=str, help='Path to SQL dump file for import data from it')
+    parser.add_argument('--db_table', default=customers.name,
+                        help='Table used to read/write data')
+    parser.add_argument('--import_dump', type=str,
+                        help='Path to SQL dump file for import data from it')
     args = parser.parse_args()
 
     engine = get_engine(
