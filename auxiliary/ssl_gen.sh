@@ -70,4 +70,4 @@ docker run --rm -v $DESTINATION:/keys/  cossacklabs/acra-keymaker:${ACRA_DOCKER_
 sudo chown $(whoami) $DESTINATION/master.key
 ACRA_MASTER_KEY=$(cat $DESTINATION/master.key | base64)
 cp ./auxiliary/env.template ./.env
-sed -i "s/^ACRA_SERVER_MASTER_KEY=.*/ACRA_SERVER_MASTER_KEY=${ACRA_MASTER_KEY}/" "./.env"
+sed -i "s|^ACRA_SERVER_MASTER_KEY=.*|ACRA_SERVER_MASTER_KEY=${ACRA_MASTER_KEY}|" "./.env"
